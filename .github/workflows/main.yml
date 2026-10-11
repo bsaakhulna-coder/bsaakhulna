@@ -7,17 +7,14 @@ jobs:
       image: kivy/buildozer:latest
     steps:
       - uses: actions/checkout@v4
-      
-      - name: Fix root warning
-        run: |
-          sed -i 's/warn_on_root = 1/warn_on_root = 0/' buildozer.spec
-          echo "warn_on_root = 0" >> buildozer.spec
-          cat buildozer.spec
-          
+
       - name: Build APK
         run: |
+          # Remove duplicate if exists, keep only 0
+          sed -i '/warn_on_root/d' buildozer.spec
+          echo "warn_on_root = 0" >> buildozer.spec
           yes | buildozer android debug
-          
+
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
